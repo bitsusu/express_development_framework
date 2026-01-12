@@ -2,6 +2,7 @@ this is a folder for the app middlewares, include rbac / auth/ errorHandler .etc
 
 Express 最全常用中间件（分类讲解 + 用法 + 项目必配，含你的项目适配）
 你当前是基于 Express + Sequelize + 逻辑外键 + 迁移脚本 的生产级项目，本次内容会贴合你的项目场景，把 Express 最常用、最核心、项目开发必配 的中间件做「分类整理 + 完整用法 + 代码示例 + 使用场景」，所有示例代码都能无缝接入你现有的项目，内容从基础到进阶，看完就能直接用。
+
 一、先搞懂：Express 中「中间件的核心概念」
 1. 中间件是什么？
 Express 的核心就是 中间件机制，中间件本质是一个 function(req, res, next) 函数，有 3 个固定参数：
@@ -12,8 +13,10 @@ next：放行函数，调用 next() 会让请求「流转」到下一个中间�
 按照代码的书写顺序从上到下依次执行
 可以全局注册（对所有接口生效）、路由注册（对指定接口生效）
 可以处理「请求到来 → 接口响应 → 响应结束」的全生命周期
+
 二、✅ 第一类：Express 内置中间件（无需额外安装，原生自带，必用！）
 这类是 Express 官方内置的中间件，不用 npm 安装，直接require('express')调用，零依赖，是所有项目的基础必备，你的项目里已经用到了部分，补全即可。
+
 1. express.json() - 解析 JSON 格式的请求体
 ✅ 作用
 解析前端传来的 JSON格式 请求体数据（如 axios.post 传的{name:"xxx",age:18}），解析后挂载到 req.body 上，否则 req.body 为 undefined。
@@ -25,8 +28,9 @@ javascript
 const express = require('express');
 const app = express();
 // ✅ 核心内置中间件 - 解析JSON请求体
-app.use(express.json()); 
-2. express.urlencoded({ extended: true }) - 解析表单格式的请求体
+app.use(express.json());
+
+3. express.urlencoded({ extended: true }) - 解析表单格式的请求体
 ✅ 作用
 解析前端 form 表单提交 / x-www-form-urlencoded 格式的请求体数据，解析后同样挂载到 req.body 上。
 extended: true：支持解析嵌套对象格式的表单数据（推荐）
@@ -39,7 +43,7 @@ javascript
 // ✅ 两个一起写，解析所有格式的请求体
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-3. express.static() - 托管静态资源
+4. express.static() - 托管静态资源
 ✅ 作用
 将项目中的静态文件（图片、视频、css、js、pdf 等）对外开放访问，无需写接口就能直接访问文件。
 ✅ 使用场景
@@ -70,6 +74,7 @@ module.exports = router;
 // app.js 中注册路由中间件
 const router = require('./router/index');
 app.use('/api', router); // 所有接口统一加/api前缀
+
 三、✅ 第二类：第三方中间件（npm 安装，高频必用，生产级项目标配）
 这类是社区生态最成熟的第三方中间件，需要 npm 安装后使用，是 Express 项目的核心组成部分，你的 Express+Sequelize 项目必须配置，按「重要程度排序」，从必备到常用依次讲解，所有依赖直接复制安装。
 ✅ 必装核心（5 个，重中之重，无脑装）
@@ -403,6 +408,7 @@ app.use(expressJWT({ secret: secretKey, algorithms: ['HS256'] }).unless({
     console.log(`✅ Express服务启动成功，端口：${port}，生产级配置完成`);
   });
 })();
+
 七、✅ 中间件核心总结（必记，避免踩坑）
 1. 中间件的执行顺序原则
 全局中间件 → 路由级中间件 → 接口回调函数 → 错误处理中间件，按代码书写顺序执行，跨域、解析请求体的中间件一定要写在最前面。
